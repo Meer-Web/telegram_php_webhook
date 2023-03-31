@@ -2,7 +2,7 @@
 /*
 Author: info@meer-web.nl
 Web: https://meer-web.nl
-Version: 1.0
+Version: 1.0.0
 
 #URL to get the webhook info
 https://api.telegram.org/bot<BOT_ID>/getWebhookInfo
