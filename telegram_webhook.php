@@ -2,6 +2,7 @@
 /*
 Author: info@meer-web.nl
 Web: https://meer-web.nl
+Version: 1.0
 
 #URL to get the webhook info
 https://api.telegram.org/bot<BOT_ID>/getWebhookInfo
@@ -50,6 +51,11 @@ $MESSAGE = explode(" ", strtolower($TELEGRAM_RCV["message"]["text"]));
 $MESSAGE_FULL = $TELEGRAM_RCV["message"]["text"];
 $MESSAGE_FULL = substr(strstr("$MESSAGE_FULL"," "), 1);
 
+// Get first name of user sending message
+$FIRSTNAME = $TELEGRAM_RCV["message"]["from"]["first_name"];
+$LASTNAME = $TELEGRAM_RCV["message"]["from"]["last_name"];
+$USERID = $TELEGRAM_RCV["message"]["from"]["id"];
+
 // Trim off botname
 if(strpos($MESSAGE[0], '@') !== false){
 	$COMMAND = explode('@', $MESSAGE[0]);
@@ -62,7 +68,7 @@ if(strpos($MESSAGE[0], '@') !== false){
 switch ($MESSAGE[0]) {
         case '/ping':
                 // Friendly reply
-                telegram("Hi!");
+                telegram("Hi $FIRSTNAME!");
                 break;
         case '/time':
                 // Send current time
