@@ -2,7 +2,7 @@
 /*
 Author: info@meer-web.nl
 Web: https://meer-web.nl
-Version: 2.0.0
+Version: 2.1.0
 
 #URL to get the webhook info
 https://api.telegram.org/bot<BOT_ID>/getWebhookInfo
@@ -23,8 +23,8 @@ $TELEGRAM_BOT='123456789:ABCDEFXXXXXXXXXXXXXXXXXXXXX';
 
 /********************** Start script **********************/
 // Telegram function which you can call
-function telegram($METHOD) {
-        global $TELEGRAM_BOT, $TELEGRAM_CHATID, $MSG, $CAPTION;
+function telegram($METHOD, $MSG) {
+        global $TELEGRAM_BOT, $TELEGRAM_CHATID, $CAPTION;
         if ($METHOD == 'TXT') { 
                 $url='https://api.telegram.org/bot'.$TELEGRAM_BOT.'/sendMessage';$data=array('chat_id'=>$TELEGRAM_CHATID,'text'=>$MSG);
         }
@@ -81,29 +81,29 @@ switch ($MESSAGE[0]) {
         case '/ping':
                 // Friendly reply
                 $MSG = "Hi $FIRSTNAME!";
-                telegram('TXT');
+                telegram('TXT', "$MSG");
                 break;
         case '/time':
                 // Send current time
                 $MSG = "The current time is " . date('d-m-Y H:i:s');
-                telegram('TXT');
+                telegram('TXT', "$MSG");
                 break;
         case '/chatid':
                 // Show chatid
                 $MSG = "$TELEGRAM_CHATID";
-                telegram('TXT');
+                telegram('TXT', "$MSG");
                 break;
 	case '/picture':
                 // Show an image with caption (or leave caption empty)
                 $MSG = "https://www.creativefabrica.com/wp-content/uploads/2022/04/11/Turtle-Graphics-3812807.jpg";
                 $CAPTION = 'Here you have a little turtle';
-		telegram('IMG');
+		telegram('IMG', "$MSG");
 		break;
         case '/gif':
                 // Show a gif with caption (or leave caption empty)
                 $MSG = "https://media2.giphy.com/media/LMVkZXubrWzcaZNq10/giphy.gif";
                 $CAPTION = 'Here you have a swimming turtle';
-                telegram('GIF');
+                telegram('GIF', "$MSG");
                 break;
 	}
 ?>
