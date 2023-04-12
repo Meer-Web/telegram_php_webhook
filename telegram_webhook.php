@@ -2,7 +2,7 @@
 /*
 Author: info@meer-web.nl
 Web: https://meer-web.nl
-Version: 1.0.0
+Version: 2.0.0
 
 #URL to get the webhook info
 https://api.telegram.org/bot<BOT_ID>/getWebhookInfo
@@ -13,31 +13,40 @@ curl -F "url=https://<DOMAIN.TLD>/<YOUR_WEBHOOK_PHP>" https://api.telegram.org/b
 help - Show help
 ping - Check keepalive
 time - Shows the current time.
-picture - Reply with a picture
+picture - Post a picture
+gif - Post a gif
 */
 
-// Telegram function for posting text.
-function telegram($msg) {
-        global $TELEGRAM_BOT,$TELEGRAM_CHATID;
-        $url='https://api.telegram.org/bot'.$TELEGRAM_BOT.'/sendMessage';$data=array('chat_id'=>$TELEGRAM_CHATID,'text'=>$msg);
-        $options=array('http'=>array('method'=>'POST','header'=>"Content-Type:application/x-www-form-urlencoded\r\n",'content'=>http_build_query($data),),);
-        $context=stream_context_create($options);
-        $result=file_get_contents($url,false,$context);
-        return $result;
-}
-
-// Telegram function for posting images.
-function telegram_pic($msg, $caption) {
-        global $TELEGRAM_BOT,$TELEGRAM_CHATID;
-        $url='https://api.telegram.org/bot'.$TELEGRAM_BOT.'/sendPhoto';$data=array('chat_id'=>$TELEGRAM_CHATID,'photo'=>$msg,'caption'=>$caption);
-        $options=array('http'=>array('method'=>'POST','header'=>"Content-Type:application/x-www-form-urlencoded\r\n",'content'=>http_build_query($data),),);
-        $context=stream_context_create($options);
-        $result=file_get_contents($url,false,$context);
-        return $result;
-}
-
-// Set your Bot ID and Chat ID.
+/********************** Variables to set **********************/
+// Set your Bot ID.
 $TELEGRAM_BOT='123456789:ABCDEFXXXXXXXXXXXXXXXXXXXXX';
+
+/********************** Start script **********************/
+// Telegram function which you can call
+function telegram($METHOD) {
+        global $TELEGRAM_BOT, $TELEGRAM_CHATID, $MSG, $CAPTION;
+        if ($METHOD == 'TXT') { 
+                $url='https://api.telegram.org/bot'.$TELEGRAM_BOT.'/sendMessage';$data=array('chat_id'=>$TELEGRAM_CHATID,'text'=>$MSG);
+        }
+        if ($METHOD == 'IMG') {
+                if ($CAPTION != '') {
+                        $url='https://api.telegram.org/bot'.$TELEGRAM_BOT.'/sendPhoto';$data=array('chat_id'=>$TELEGRAM_CHATID,'photo'=>$IMG,'caption'=>$CAPTION);
+                } else {
+                        $url='https://api.telegram.org/bot'.$TELEGRAM_BOT.'/sendPhoto';$data=array('chat_id'=>$TELEGRAM_CHATID,'photo'=>$IMG);
+                }
+         }
+        if ($METHOD == 'GIF') { 
+                if ($CAPTION != '') {
+                        $url='https://api.telegram.org/bot'.$TELEGRAM_BOT.'/sendAnimation';$data=array('chat_id'=>$TELEGRAM_CHATID,'animation'=>$GIF,'caption'=>$CAPTION);
+                } else {
+                        $url='https://api.telegram.org/bot'.$TELEGRAM_BOT.'/sendAnimation';$data=array('chat_id'=>$TELEGRAM_CHATID,'animation'=>$GIF);
+                }
+        }
+        $options=array('http'=>array('method'=>'POST','header'=>"Content-Type:application/x-www-form-urlencoded\r\n",'content'=>http_build_query($data),),);
+        $context=stream_context_create($options);
+        $result=file_get_contents($url,false,$context);
+        return $result;
+}
 
 $TELEGRAM_API = "https://api.telegram.org/bot$TELEGRAM_BOT";
 $TELEGRAM_RCV = json_decode(file_get_contents("php://input"), TRUE);
@@ -64,24 +73,37 @@ if(strpos($MESSAGE[0], '@') !== false){
 	$COMMAND = $MESSAGE[0];
 }
 
+// Set empty caption
+$CAPTION = '';
+
 // Reply
 switch ($MESSAGE[0]) {
         case '/ping':
                 // Friendly reply
-                telegram("Hi $FIRSTNAME!");
+                $MSG = "Hi $FIRSTNAME!";
+                telegram('TXT');
                 break;
         case '/time':
                 // Send current time
-                $now = date('d-m-Y H:i:s');
-                telegram("The current time is $now");
+                $MSG = "The current time is " . date('d-m-Y H:i:s');
+                telegram('TXT');
                 break;
         case '/chatid':
                 // Show chatid
-                telegram("$TELEGRAM_CHATID");
+                $MSG = "$TELEGRAM_CHATID";
+                telegram('TXT');
                 break;
 	case '/picture':
-                // Reply image (use of different function)
-		telegram_pic("URL OF IMAGE","YOUR CAPTION");
+                // Show an image with caption (or leave caption empty)
+                $MSG = "https://www.creativefabrica.com/wp-content/uploads/2022/04/11/Turtle-Graphics-3812807.jpg";
+                $CAPTION = 'Here you have a little turtle';
+		telegram('IMG');
 		break;
+        case '/gif':
+                // Show a gif with caption (or leave caption empty)
+                $MSG = "https://media2.giphy.com/media/LMVkZXubrWzcaZNq10/giphy.gif";
+                $CAPTION = 'Here you have a swimming turtle';
+                telegram('GIF');
+                break;
 	}
 ?>

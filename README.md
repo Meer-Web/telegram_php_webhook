@@ -24,5 +24,6 @@ You can use the following commands as an example:
 /time
 /chatid
 /picture
+/gif
 
-You can easily add more in the case statement in the code.
+You can easily add more in the case statement in the code or make it do random images.
